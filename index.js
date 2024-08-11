@@ -9,6 +9,7 @@ const app = express()
 app.set('view engine', 'ejs')
 
 app.use(express.json())
+
 app.use(cookieParser())
 
 app.use(express.static('public'))
@@ -65,8 +66,9 @@ app.post('/register', async (req, res) => {
 })
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('access_token')
-  res.json({ message: 'Logout successful!' })
+  res
+    .clearCookie('access_token')
+    .json({ message: 'Logout successful!' })
 })
 
 app.get('/protected', async (req, res) => {
