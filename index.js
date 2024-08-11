@@ -70,17 +70,10 @@ app.post('/logout', (req, res) => {
 })
 
 app.get('/protected', async (req, res) => {
-  const token = req.cookies.access_token
-  if (!token) {
+  if (!req.session.user) {
     return res.status(403).send('Access not authorized')
   }
-
-  try {
-    const { payload } = await jose.jwtVerify(token, new TextEncoder().encode(SECRET_JWT_KEY))
-    res.render('protected', { user: payload })
-  } catch (error) {
-    res.status(401).send('Access not authorized')
-  }
+  res.render('protected', { user: req.session.user })
 })
 
 app.listen(PORT, () => {
