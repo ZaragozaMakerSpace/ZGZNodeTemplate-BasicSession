@@ -3,6 +3,51 @@
 <head>
     <title>Authentication</title>
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <% if (user && user.username) { %>
+            <div class="user-info">
+                <p>Welcome, <%= user.username %>!</p>
+                <form action="/logout" method="POST" onsubmit="logout(event)">
+                    <button type="submit">Logout</button>
+                </form>
+            </div>
+        <% } else { %>
+            <div id="message" class="message"><%= message %></div>
+
+            <div class="login-container">
+                <h2>Login</h2>
+                <form onsubmit="login(event)">
+                    <div class="form-group">
+                        <label for="login-username">Username:</label>
+                        <input type="text" id="login-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password:</label>
+                        <input type="password" id="login-password" name="password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+
+            <div class="register-container">
+                <h2>Register</h2>
+                <form onsubmit="register(event)">
+                    <div class="form-group">
+                        <label for="register-username">Username:</label>
+                        <input type="text" id="register-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password:</label>
+                        <input type="password" id="register-password" name="password" required>
+                    </div>
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+
     <script>
         async function login(event) {
             event.preventDefault();
@@ -41,41 +86,20 @@
             const result = await response.json();
             document.getElementById('message').textContent = result.message;
         }
+
+        async function logout(event) {
+            event.preventDefault();
+            const response = await fetch('/logout', {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                document.getElementById('message').textContent = result.message;
+            }
+        }
     </script>
-</head>
-<body>
-    <div class="auth-container">
-        <div id="message" class="message"><%= message %></div>
-
-        <div class="login-container">
-            <h2>Login</h2>
-            <form onsubmit="login(event)">
-                <div class="form-group">
-                    <label for="login-username">Username:</label>
-                    <input type="text" id="login-username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Password:</label>
-                    <input type="password" id="login-password" name="password" required>
-                </div>
-                <button type="submit">Login</button>
-            </form>
-        </div>
-
-        <div class="register-container">
-            <h2>Register</h2>
-            <form onsubmit="register(event)">
-                <div class="form-group">
-                    <label for="register-username">Username:</label>
-                    <input type="text" id="register-username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-password">Password:</label>
-                    <input type="password" id="register-password" name="password" required>
-                </div>
-                <button type="submit">Register</button>
-            </form>
-        </div>
-    </div>
 </body>
 </html>
