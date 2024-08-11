@@ -13,8 +13,21 @@ app.use(cookieParser())
 
 app.use(express.static('public'))
 
-app.get('/', (req, res) => {
-  res.render('index', { message: null })
+app.use(async (req, res, next) => {
+  const token = req.cookies.access_token
+  req.session = { user: null }
+  try {
+    const { payload } = await jose.jwtVerify(token, new TextEncoder().encode(SECRET_JWT_KEY))
+    req.session.user = payload
+  } catch {}
+
+  next()
+})
+
+app.get('/', async (req, res) => {
+  const user = req.session.user || null
+  const message = ''
+  res.render('index', { user, message })
 })
 
 app.post('/login', async (req, res) => {
